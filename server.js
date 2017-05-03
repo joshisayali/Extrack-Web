@@ -6,13 +6,18 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
-var url = 'mongodb://localhost:27017/Extrack';
+var url = process.env.MONGODB_URI;
 mongoose.connect(url);
 var db = mongoose.connection;
+console.log('Connection url:'+url);
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open',function(){
     // we're connected!
-    console.log("Connected correctly to server");    
+    console.log("Connected correctly to server"); 
+    var server = app.listen(process.env.PORT || 3000, function () {
+    var port = server.address().port;
+    console.log("App now running on port", port);
+  });
 });
 var expenses = require('./routes/expenseRouter');
 var expensePayments = require('./routes/expensePaymentRouter');
@@ -32,7 +37,3 @@ app.use('/expensecategories', expenseCategories);
 app.use('/expensesubcategories', expenseSubCategories);
 app.use('/expenserepeats',expenseRepeats);
 
-var server = app.listen(process.env.PORT || 3000, function () {
-    var port = server.address().port;
-    console.log("App now running on port", port);
-  });
