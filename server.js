@@ -31,6 +31,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+var distDir = __dirname + "/dist/";
+app.use(express.static(distDir));
+
 app.use('/expenses',expenses);
 app.use('/expensepayments',expensePayments);
 app.use('/expensecategories', expenseCategories);
