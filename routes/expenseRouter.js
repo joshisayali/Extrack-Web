@@ -6,13 +6,13 @@ var Expenses = require('../models/expenses');
 var ExpensePayment = require('../models/expensePayments');
 var ExpenseSubCategory = require('../models/expenseSubCategories');
 var ExpenseRepeat = require('../models/expenseRepeats');
-
+var Verify = require('./verify');
 
 var expenseRouter = express.Router();
 expenseRouter.use(bodyParser.json());
 
 expenseRouter.route('/')
-.get(function(req,res,next){    
+.get(Verify.verifyOrdinaryUser,function(req,res,next){    
     
    Expenses.find({})
     .sort('-expenseDate')
@@ -26,7 +26,7 @@ expenseRouter.route('/')
     });    
    
 })
-.post(function(req,res,next){
+.post(Verify.verifyOrdinaryUser,function(req,res,next){
     console.log('inside post')
        
     Expenses.create(req.body, function(err,expense){
@@ -39,7 +39,7 @@ expenseRouter.route('/')
         }        
     });
 })
-.delete(function(req,res,next){
+.delete(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.remove({},function(err,resp){
         if(err) throw err;
         res.json(resp);
@@ -47,7 +47,7 @@ expenseRouter.route('/')
 });
 
 expenseRouter.route('/:from-:to')
-.get(function(req,res,next){
+.get(Verify.verifyOrdinaryUser, function(req,res,next){
     //var fromDate = Date.parse(req.params.from);
     //var toDate = Date.parse(req.params.to);
     console.log('Expense router:'+req.params.from + ','+req.params.to);
@@ -65,7 +65,7 @@ expenseRouter.route('/:from-:to')
 });
 
 expenseRouter.route('/:expenseId')
-.get(function(req,res,next){
+.get(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.findById(req.params.expenseId)
     .populate('expensePayment')
     .populate('expenseSubCategory')  
@@ -76,13 +76,13 @@ expenseRouter.route('/:expenseId')
         res.json(expense);
     });
 })
-.put(function(req,res,next){
+.put(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.findByIdAndUpdate(req.params.expenseId,{$set:req.body},{new:true},function(err,expense){
         if(err) throw err;
         res.json(expense);
     })
 })
-.delete(function(req,res,next){
+.delete(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.findByIdAndRemove(req.params.expenseId, function(err,resp){
         if(err) throw err;
         res.json(resp);
