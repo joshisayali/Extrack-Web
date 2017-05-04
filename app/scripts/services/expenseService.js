@@ -1,6 +1,6 @@
 'use strict';
 angular.module('extrackWebApp')
-.constant('baseURL','https://dry-spire-60543.herokuapp.com/')
+.constant('baseURL','https://dry-spire-60543.herokuapp.com/') //'http://localhost:3000/'
 .service('expenseFactory',['$resource','baseURL',function($resource,baseURL){
     
     this.getExpenses = function(){

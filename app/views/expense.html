@@ -153,8 +153,8 @@
                                     </select>
                                 </td>                              
                                 <td>
-                                    <button  class="btn btn-default-noborder" ng-click="saveExpense(expense)"><i class="fa fa-lg fa-floppy-o fa-fw text-success"></i></button>
-                                    <a ng-click="toggleEditMode()"><i class="fa fa-lg fa-close fa-fw text-danger"></i></a>
+                                    <button  class="btn btn-default-noborder" ng-click="saveExpense(expense)"><span class="glyphicon glyphicon-check text-success"></span></button>
+                                    <a ng-click="toggleEditMode()"><span class="glyphicon glyphicon-remove-sign text-danger"></span></a>
                                 </td>                              
                         </tr>                        
                         <tr ng-repeat="expense in expenses" ng-hide="expense._id == editModeId">
@@ -165,8 +165,8 @@
                             <td>{{expense.expenseSubCategory.expenseSubCategoryName}}</td>
                             <td>{{expense.expenseRepeat.expenseRepeatFrequency}}</td>
                             <td>
-                                <a ng-click="toggleEditMode(expense._id)"><i class="fa fa-lg fa-edit fa-fw text-info"></i></a>
-                                <a ng-click="deleteExpense(expense._id)"><i class="fa fa-lg fa-trash-o fa-fw text-danger"></i></a>
+                                <a ng-click="toggleEditMode(expense._id)"><span class="glyphicon glyphicon-edit text-info"></span></a>
+                                <a ng-click="deleteExpense(expense._id)"><span class="glyphicon glyphicon-trash text-danger"></span></a>
                             </td>                             
                         </tr>                        
                     </tbody>

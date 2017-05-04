@@ -11,7 +11,8 @@
 angular
   .module('extrackWebApp', [
     'ngResource',
-    'ui.router'
+    'ui.router',
+    'ngDialog'
   ])
   .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
@@ -19,7 +20,8 @@ angular
         url:'/',
         views:{
             'header': {
-                templateUrl : 'views/header.html'
+                templateUrl : 'views/header.html',
+                controller: 'HeaderController'
             },
             'content': {
                 templateUrl : 'views/home.html',
