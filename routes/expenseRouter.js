@@ -22,7 +22,7 @@ expenseRouter.route('/')
     .exec(function(err,expenses){
         if(err) {
             console.log('error from expense router');
-            throw err;
+            res.json(err);
         }
         res.json(expenses);
     });    
@@ -33,9 +33,8 @@ expenseRouter.route('/')
        
     Expenses.create(req.body, function(err,expense){
         if(err) {
-            console.log(err);
-            console.log('Request body:' + req.body);
-            //throw err;
+            console.log(err);            
+            res.json(err);
         }
         else{
             console.log('expense created');
@@ -44,7 +43,7 @@ expenseRouter.route('/')
 })
 .delete(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.remove({},function(err,resp){
-        if(err) throw err;
+        if(err) res.json(err);
         res.json(resp);
     });
 });
@@ -61,7 +60,7 @@ expenseRouter.route('/users/:username')
     .exec(function(err,expenses){
         if(err) {
             console.log('error from expense router');
-            throw err;
+            res.json(err);
         }
         res.json(expenses);
     });    
@@ -72,13 +71,11 @@ expenseRouter.route('/users/:username')
        
     Expenses.create(req.body, function(err,expense){
         if(err) {
-            console.log(err);
-            console.log('Request body:' + req.body);
-            //throw err;
+            console.log(err);            
+            res.json(err);
         }
-        else{
-            console.log('expense created');
-        }        
+        console.log('expense created');
+        res.json(expense);        
     });
 });
 
@@ -96,7 +93,7 @@ expenseRouter.route('/users/:username/:from-:to')
     .populate('expenseRepeat')
     .sort('-expenseDate')
     .exec(function(err,expenses){
-       if(err) throw err;
+       if(err) res.json(err);
         res.json(expenses);
     });
 });
@@ -114,7 +111,7 @@ expenseRouter.route('/:from-:to')
     .populate('expenseRepeat')
     .sort('-expenseDate')
     .exec(function(err,expenses){
-       if(err) throw err;
+       if(err) res.json(err);
         res.json(expenses);
     });
 });
@@ -126,20 +123,20 @@ expenseRouter.route('/:expenseId')
     .populate('expenseSubCategory')  
     .populate('expenseRepeat')
     .exec(function(err,expense){
-        if(err) throw err;
+        if(err) res.json(err);
         //console.log(expenses[0]);
         res.json(expense);
     });
 })
 .put(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.findByIdAndUpdate(req.params.expenseId,{$set:req.body},{new:true},function(err,expense){
-        if(err) throw err;
+        if(err) res.json(err);
         res.json(expense);
     })
 })
 .delete(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.findByIdAndRemove(req.params.expenseId, function(err,resp){
-        if(err) throw err;
+        if(err) res.json(err);
         res.json(resp);
     })
 });
@@ -147,13 +144,13 @@ expenseRouter.route('/:expenseId')
 expenseRouter.route('/users/:username/:expenseId')
 .put(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.findByIdAndUpdate(req.params.expenseId,{$set:req.body},{new:true},function(err,expense){
-        if(err) throw err;
+        if(err) res.json(err);
         res.json(expense);
     })
 })
 .delete(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.findByIdAndRemove(req.params.expenseId, function(err,resp){
-        if(err) throw err;
+        if(err) res.json(err);
         res.json(resp);
     })
 });

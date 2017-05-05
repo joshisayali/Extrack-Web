@@ -1,8 +1,8 @@
 'use strict';
 angular.module('extrackWebApp')
-.controller('ExpenseController', ['$scope','$state','expenseFactory','authFactory', function($scope,$state, expenseFactory, authFactory){
+.controller('ExpenseController', ['$scope','$state','expenseFactory','authFactory','ngDialog', function($scope,$state, expenseFactory, authFactory, ngDialog){
     /*----------------------------------------variables----------------------------------------------*/
-    $scope.message = 'this is expense controller';
+    //$scope.message = 'error message';
     $scope.editMode = false;
     $scope.newExpense = {expenseDate:'',expenseItem:'',expenseAmount:'',expensePayment:'',expenseSubCategory:'',expenseRepeat:''};
     $scope.filterData = {fromDate:'',toDate:''};
@@ -60,16 +60,32 @@ angular.module('extrackWebApp')
         });
     
     /*-----------------------------------------functions----------------------------------------------------*/
+    $scope.openCreateExpense = function(){
+        ngDialog.open({ template: 'views/createExpense.html', scope: $scope, className: 'ngdialog-theme-default', controller:"RegisterController" });
+    };
+    
     $scope.createExpense = function(){
         //create expense for a user
         $scope.newExpense.username = authFactory.getUsername();
-        console.log($scope.newExpense);
+        //console.log($scope.newExpense);
         //expenseFactory.getExpenses().create($scope.newExpense);
+        var errormessage;
+        expenseFactory.getUserExpenses().create({username: authFactory.getUsername()},$scope.newExpense)
+        .$promise.then(
+            function(resp){
+                console.log(resp);
+                ngDialog.close(); 
+                $state.go($state.current, {}, {reload: true});
+            },
+            function(error){
+                console.log(error);
+                errormessage = error.message;
+            });
         
-        expenseFactory.getExpenses().create({username: authFactory.getUsername()},$scope.newExpense);
-        
+        $scope.message = errormessage;
         $scope.newExpense = {expenseDate:'',expenseItem:'',expenseAmount:'',expensePayment:'',expenseSubCategory:'',expenseRepeat:''};
-        $scope.createExpenseForm.$setPristine();
+        $scope.createExpenseForm.$setPristine();        
+        
     };
     
    $scope.filterExpenses = function(){
@@ -93,7 +109,7 @@ angular.module('extrackWebApp')
     $scope.saveExpense = function(expense){
         $scope.expense = expense;
         console.log('Save Expense');
-        console.log($scope.expense);
+        //console.log($scope.expense);
         
         expenseFactory.getUserExpenses()
             .update({username: authFactory.getUsername(),expenseId:$scope.expense._id},$scope.expense)
@@ -104,6 +120,7 @@ angular.module('extrackWebApp')
             },
             function(error){
                 console.log(error);
+                $scope.message = error.message;
             });
         
         $scope.toggleEditMode();
@@ -138,8 +155,9 @@ angular.module('extrackWebApp')
             
         }
         return total;
-    };        
+    }; 
     
+        
 }]);
             
             
