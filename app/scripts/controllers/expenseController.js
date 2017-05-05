@@ -1,6 +1,6 @@
 'use strict';
 angular.module('extrackWebApp')
-.controller('ExpenseController', ['$scope','$stateParams','expenseFactory','authFactory', function($scope,$stateParams, expenseFactory, authFactory){
+.controller('ExpenseController', ['$scope','$state','expenseFactory','authFactory', function($scope,$state, expenseFactory, authFactory){
     /*----------------------------------------variables----------------------------------------------*/
     $scope.message = 'this is expense controller';
     $scope.editMode = false;
@@ -78,7 +78,7 @@ angular.module('extrackWebApp')
         console.log('Expense controller:' + fromDate + ',' + toDate);
         
        $scope.expenses = expenseFactory.getSpecificExpenses().query(
-            {from:fromDate,to:toDate},
+            {username: authFactory.getUsername(),from:fromDate,to:toDate},
             function(response){
                 $scope.expenses = response;
             },
@@ -95,17 +95,12 @@ angular.module('extrackWebApp')
         console.log('Save Expense');
         console.log($scope.expense);
         
-        expenseFactory.getExpenses().update({id:$scope.expense._id},$scope.expense)
+        expenseFactory.getUserExpenses()
+            .update({username: authFactory.getUsername(),expenseId:$scope.expense._id},$scope.expense)
         .$promise.then(
             function(resp){
                 console.log(resp);
-                $scope.expenses = expenseFactory.getExpenses().query(
-                    function(response){
-                        $scope.expenses = response;
-
-                    },function(error){
-                        console.log('Error: '+error);
-                    });
+                $state.go($state.current, {}, {reload: true});
             },
             function(error){
                 console.log(error);
@@ -117,17 +112,11 @@ angular.module('extrackWebApp')
     
     $scope.deleteExpense = function(id){
         
-         expenseFactory.getExpenses().delete({id:id})
+         expenseFactory.getUserExpenses().delete({username: authFactory.getUsername(),expenseId:id})
         .$promise.then(
             function(resp){
                 console.log(resp);
-                $scope.expenses = expenseFactory.getExpenses().query(
-                    function(response){
-                        $scope.expenses = response;
-
-                    },function(error){
-                        console.log('Error: '+error);
-                    });
+                $state.go($state.current, {}, {reload: true});
             },
             function(error){
                 console.log(error);

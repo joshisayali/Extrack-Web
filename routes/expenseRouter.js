@@ -82,6 +82,25 @@ expenseRouter.route('/users/:username')
     });
 });
 
+expenseRouter.route('/users/:username/:from-:to')
+.get(Verify.verifyOrdinaryUser, function(req,res,next){
+    //var fromDate = Date.parse(req.params.from);
+    //var toDate = Date.parse(req.params.to);
+    console.log('Expense router:'+req.params.from + ','+req.params.to);
+    
+    Expenses.find({})
+    .where('username').equals(req.params.username)
+    .where('expenseDate').gte(req.params.from).lte(req.params.to)    
+    .populate('expensePayment')
+    .populate('expenseSubCategory')  
+    .populate('expenseRepeat')
+    .sort('-expenseDate')
+    .exec(function(err,expenses){
+       if(err) throw err;
+        res.json(expenses);
+    });
+});
+
 expenseRouter.route('/:from-:to')
 .get(Verify.verifyOrdinaryUser, function(req,res,next){
     //var fromDate = Date.parse(req.params.from);
@@ -112,6 +131,20 @@ expenseRouter.route('/:expenseId')
         res.json(expense);
     });
 })
+.put(Verify.verifyOrdinaryUser, function(req,res,next){
+    Expenses.findByIdAndUpdate(req.params.expenseId,{$set:req.body},{new:true},function(err,expense){
+        if(err) throw err;
+        res.json(expense);
+    })
+})
+.delete(Verify.verifyOrdinaryUser, function(req,res,next){
+    Expenses.findByIdAndRemove(req.params.expenseId, function(err,resp){
+        if(err) throw err;
+        res.json(resp);
+    })
+});
+
+expenseRouter.route('/users/:username/:expenseId')
 .put(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.findByIdAndUpdate(req.params.expenseId,{$set:req.body},{new:true},function(err,expense){
         if(err) throw err;

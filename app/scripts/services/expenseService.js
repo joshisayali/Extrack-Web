@@ -8,11 +8,11 @@ angular.module('extrackWebApp')
     };
     
     this.getUserExpenses = function(){
-        return $resource(baseURL+'expenses/users/:username',null,{'create':{method:'POST'},'update':{method:'PUT'},'delete':{method:'DELETE'}});          
+        return $resource(baseURL+'expenses/users/:username/:expenseId',null,{'create':{method:'POST'},'update':{method:'PUT'},'delete':{method:'DELETE'}});          
     };
     
     this.getSpecificExpenses = function(){        
-        return $resource(baseURL+'expenses/:from-:to');
+        return $resource(baseURL+'expenses/users/:username/:from-:to');
     };
     
     this.getExpenseCategories = function(){
