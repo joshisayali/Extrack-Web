@@ -1,21 +1,35 @@
 'use strict';
 angular.module('extrackWebApp')
-.controller('ExpenseController', ['$scope','expenseFactory', function($scope, expenseFactory){
-    //variables
+.controller('ExpenseController', ['$scope','$stateParams','expenseFactory','authFactory', function($scope,$stateParams, expenseFactory, authFactory){
+    /*----------------------------------------variables----------------------------------------------*/
     $scope.message = 'this is expense controller';
     $scope.editMode = false;
     $scope.newExpense = {expenseDate:'',expenseItem:'',expenseAmount:'',expensePayment:'',expenseSubCategory:'',expenseRepeat:''};
     $scope.filterData = {fromDate:'',toDate:''};
     
-    //routes
-    $scope.expenses = expenseFactory.getExpenses().query(
+    /*----------------------------------------routes---------------------------------------------------*/
+    
+    /*$scope.expenses = expenseFactory.getExpenses().query(
         function(response){
             $scope.expenses = response;
         
         },function(error){
             console.log('Error: '+error);
         }
+    );*/
+    
+    //get expenses for a user
+    $scope.expenses = expenseFactory.getUserExpenses().query({username: authFactory.getUsername()})
+    .$promise.then(
+        function(response){
+            $scope.expenses = response;
+        
+        },function(error){
+            console.log(authFactory.getUsername());
+            console.log('Error: '+error);
+        }
     );
+    
     
     $scope.expenseCategories = expenseFactory.getExpenseCategories().query(
         function(response){
@@ -45,31 +59,25 @@ angular.module('extrackWebApp')
             console.log('Error: '+error);
         });
     
-    //functions
+    /*-----------------------------------------functions----------------------------------------------------*/
     $scope.createExpense = function(){
-        
+        //create expense for a user
+        $scope.newExpense.username = authFactory.getUsername();
         console.log($scope.newExpense);
-        expenseFactory.getExpenses().create($scope.newExpense);
+        //expenseFactory.getExpenses().create($scope.newExpense);
+        
+        expenseFactory.getExpenses().create({username: authFactory.getUsername()},$scope.newExpense);
+        
         $scope.newExpense = {expenseDate:'',expenseItem:'',expenseAmount:'',expensePayment:'',expenseSubCategory:'',expenseRepeat:''};
         $scope.createExpenseForm.$setPristine();
     };
     
-    $scope.filterExpenses = function(){
+   $scope.filterExpenses = function(){
         var fromDate = Date.parse($scope.filterData.fromDate);
         var toDate = Date.parse($scope.filterData.toDate);
         console.log('Expense controller:' + fromDate + ',' + toDate);
         
-        /*$scope.expenses = expenseFactory.getExpenses().query(
-            {from:fromDate,to:toDate},
-            function(response){
-                $scope.expenses = response;
-
-            },function(error){
-                console.log('Error: '+error);
-            }
-        );*/        
-        
-        $scope.expenses = expenseFactory.getSpecificExpenses().query(
+       $scope.expenses = expenseFactory.getSpecificExpenses().query(
             {from:fromDate,to:toDate},
             function(response){
                 $scope.expenses = response;

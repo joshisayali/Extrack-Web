@@ -9,7 +9,8 @@ var expenseSchema = new Schema(
         expenseAmount:{type:Number, required:true},
         expensePayment: {type: mongoose.Schema.Types.ObjectId, ref:'ExpensePayment'},
         expenseSubCategory: {type: mongoose.Schema.Types.ObjectId, ref:'ExpenseSubCategory'},
-        expenseRepeat:{type: mongoose.Schema.Types.ObjectId, ref:'ExpenseRepeat'}
+        expenseRepeat:{type: mongoose.Schema.Types.ObjectId, ref:'ExpenseRepeat'},
+        username:{type:String,ref:'User'}
     },
     {
         timestamps:true

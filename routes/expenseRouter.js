@@ -14,14 +14,16 @@ expenseRouter.use(bodyParser.json());
 expenseRouter.route('/')
 .get(Verify.verifyOrdinaryUser,function(req,res,next){    
     
-   Expenses.find({})
+   Expenses.find({})    
     .sort('-expenseDate')
     .populate('expensePayment')
     .populate('expenseSubCategory')  
     .populate('expenseRepeat')
     .exec(function(err,expenses){
-        if(err) throw err;
-        //console.log(expenses[0]);
+        if(err) {
+            console.log('error from expense router');
+            throw err;
+        }
         res.json(expenses);
     });    
    
@@ -32,6 +34,7 @@ expenseRouter.route('/')
     Expenses.create(req.body, function(err,expense){
         if(err) {
             console.log(err);
+            console.log('Request body:' + req.body);
             //throw err;
         }
         else{
@@ -43,6 +46,39 @@ expenseRouter.route('/')
     Expenses.remove({},function(err,resp){
         if(err) throw err;
         res.json(resp);
+    });
+});
+
+expenseRouter.route('/users/:username')
+.get(Verify.verifyOrdinaryUser,function(req,res,next){    
+    
+   Expenses.find({})
+    .where('username').equals(req.params.username)
+    .sort('-expenseDate')
+    .populate('expensePayment')
+    .populate('expenseSubCategory')  
+    .populate('expenseRepeat')
+    .exec(function(err,expenses){
+        if(err) {
+            console.log('error from expense router');
+            throw err;
+        }
+        res.json(expenses);
+    });    
+   
+})
+.post(Verify.verifyOrdinaryUser,function(req,res,next){
+    console.log('inside post')
+       
+    Expenses.create(req.body, function(err,expense){
+        if(err) {
+            console.log(err);
+            console.log('Request body:' + req.body);
+            //throw err;
+        }
+        else{
+            console.log('expense created');
+        }        
     });
 });
 
