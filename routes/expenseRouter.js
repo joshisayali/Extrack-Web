@@ -21,8 +21,9 @@ expenseRouter.route('/')
     .populate('expenseRepeat')
     .exec(function(err,expenses){
         if(err) {
-            console.log('error from expense router');
-            res.json(err);
+            var err = new Error(err.message);
+             err.status = 500;
+             return next(err);
         }
         res.json(expenses);
     });    
@@ -33,8 +34,9 @@ expenseRouter.route('/')
        
     Expenses.create(req.body, function(err,expense){
         if(err) {
-            console.log(err);            
-            res.json(err);
+            var err = new Error(err.message);
+             err.status = 500;
+             return next(err);
         }
         else{
             console.log('expense created');
@@ -43,7 +45,11 @@ expenseRouter.route('/')
 })
 .delete(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.remove({},function(err,resp){
-        if(err) res.json(err);
+        if(err) {
+            var err = new Error(err.message);
+             err.status = 500;
+             return next(err);
+        }
         res.json(resp);
     });
 });
@@ -60,7 +66,9 @@ expenseRouter.route('/users/:username')
     .exec(function(err,expenses){
         if(err) {
             console.log('error from expense router');
-            res.json(err);
+            var err = new Error(err.message);
+            err.status = 500;
+            return next(err);
         }
         res.json(expenses);
     });    
@@ -71,8 +79,11 @@ expenseRouter.route('/users/:username')
        
     Expenses.create(req.body, function(err,expense){
         if(err) {
-            console.log(err);            
-            res.json(err);
+            console.log(err); 
+             var err = new Error(err.message);
+             err.status = 500;
+             return next(err);
+            //res.status(500).json({message: err.message});//another way to send error to client
         }
         console.log('expense created');
         res.json(expense);        
@@ -93,7 +104,11 @@ expenseRouter.route('/users/:username/:from-:to')
     .populate('expenseRepeat')
     .sort('-expenseDate')
     .exec(function(err,expenses){
-       if(err) res.json(err);
+       if(err) {
+           var err = new Error(err.message);
+            err.status = 500;
+            return next(err);
+       }
         res.json(expenses);
     });
 });
@@ -111,7 +126,11 @@ expenseRouter.route('/:from-:to')
     .populate('expenseRepeat')
     .sort('-expenseDate')
     .exec(function(err,expenses){
-       if(err) res.json(err);
+       if(err) {
+           var err = new Error(err.message);
+             err.status = 500;
+             return next(err);
+       }
         res.json(expenses);
     });
 });
@@ -123,20 +142,31 @@ expenseRouter.route('/:expenseId')
     .populate('expenseSubCategory')  
     .populate('expenseRepeat')
     .exec(function(err,expense){
-        if(err) res.json(err);
-        //console.log(expenses[0]);
+        if(err) {
+            var err = new Error(err.message);
+             err.status = 500;
+             return next(err);
+        }
         res.json(expense);
     });
 })
 .put(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.findByIdAndUpdate(req.params.expenseId,{$set:req.body},{new:true},function(err,expense){
-        if(err) res.json(err);
+        if(err) {
+            var err = new Error(err.message);
+             err.status = 500;
+             return next(err);
+        }
         res.json(expense);
     })
 })
 .delete(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.findByIdAndRemove(req.params.expenseId, function(err,resp){
-        if(err) res.json(err);
+        if(err) {
+            var err = new Error(err.message);
+             err.status = 500;
+             return next(err);
+        }
         res.json(resp);
     })
 });
@@ -144,13 +174,21 @@ expenseRouter.route('/:expenseId')
 expenseRouter.route('/users/:username/:expenseId')
 .put(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.findByIdAndUpdate(req.params.expenseId,{$set:req.body},{new:true},function(err,expense){
-        if(err) res.json(err);
+        if(err) {
+            var err = new Error(err.message);
+             err.status = 500;
+             return next(err);
+        }
         res.json(expense);
     })
 })
 .delete(Verify.verifyOrdinaryUser, function(req,res,next){
     Expenses.findByIdAndRemove(req.params.expenseId, function(err,resp){
-        if(err) res.json(err);
+        if(err) {
+            var err = new Error(err.message);
+             err.status = 500;
+             return next(err);
+        }
         res.json(resp);
     })
 });

@@ -2,10 +2,12 @@
 angular.module('extrackWebApp')
 .controller('ExpenseController', ['$scope','$state','expenseFactory','authFactory','ngDialog', function($scope,$state, expenseFactory, authFactory, ngDialog){
     /*----------------------------------------variables----------------------------------------------*/
-    //$scope.message = 'error message';
+    $scope.message = 'Loading...';
     $scope.editMode = false;
     $scope.newExpense = {expenseDate:'',expenseItem:'',expenseAmount:'',expensePayment:'',expenseSubCategory:'',expenseRepeat:''};
     $scope.filterData = {fromDate:'',toDate:''};
+    $scope.showError = false;  
+    $scope.customErrorMessage = "Error Occured. Please try again. Error Details:";
     
     /*----------------------------------------routes---------------------------------------------------*/
     
@@ -23,10 +25,13 @@ angular.module('extrackWebApp')
     .$promise.then(
         function(response){
             $scope.expenses = response;
+            $scope.showError = false;
         
         },function(error){
             console.log(authFactory.getUsername());
-            console.log('Error: '+error);
+            console.log(error);
+            $scope.showError = true;
+            $scope.message = $scope.customErrorMessage + error.data.message;
         }
     );
     
@@ -67,22 +72,22 @@ angular.module('extrackWebApp')
     $scope.createExpense = function(){
         //create expense for a user
         $scope.newExpense.username = authFactory.getUsername();
-        //console.log($scope.newExpense);
-        //expenseFactory.getExpenses().create($scope.newExpense);
-        var errormessage;
         expenseFactory.getUserExpenses().create({username: authFactory.getUsername()},$scope.newExpense)
         .$promise.then(
             function(resp){
                 console.log(resp);
                 ngDialog.close(); 
+                $scope.showError = false;
                 $state.go($state.current, {}, {reload: true});
             },
             function(error){
                 console.log(error);
-                errormessage = error.message;
+                ngDialog.close();
+                $scope.showError = true;
+                $scope.message = $scope.customErrorMessage + error.data.message;
+                
             });
         
-        $scope.message = errormessage;
         $scope.newExpense = {expenseDate:'',expenseItem:'',expenseAmount:'',expensePayment:'',expenseSubCategory:'',expenseRepeat:''};
         $scope.createExpenseForm.$setPristine();        
         
@@ -97,9 +102,12 @@ angular.module('extrackWebApp')
             {username: authFactory.getUsername(),from:fromDate,to:toDate},
             function(response){
                 $scope.expenses = response;
+                $scope.showError = false;
             },
             function(error){
                 console.log('Error: '+error);
+                $scope.showError = true;
+                $scope.message = $scope.customErrorMessage + error.data.message;
             });
         
         $scope.filterData = {fromDate:'',toDate:''};       
@@ -116,11 +124,13 @@ angular.module('extrackWebApp')
         .$promise.then(
             function(resp){
                 console.log(resp);
+                $scope.showError = false;
                 $state.go($state.current, {}, {reload: true});
             },
             function(error){
                 console.log(error);
-                $scope.message = error.message;
+                $scope.showError = true;
+                $scope.message = $scope.customErrorMessage + error.data.message;
             });
         
         $scope.toggleEditMode();
@@ -133,10 +143,13 @@ angular.module('extrackWebApp')
         .$promise.then(
             function(resp){
                 console.log(resp);
+                $scope.showError = false;
                 $state.go($state.current, {}, {reload: true});
             },
             function(error){
                 console.log(error);
+                $scope.showError = true;
+                $scope.message = $scope.customErrorMessage + error.data.message;
             });
         
     };
