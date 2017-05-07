@@ -18,16 +18,19 @@ angular.module('extrackWebApp')
        authFactory.logout();
         $scope.loggedIn = false;
         $scope.username = '';
+        $state.go('app', {}, {reload: true});
     };
     
     $rootScope.$on('login:Successful', function () {
         $scope.loggedIn = authFactory.isAuthenticated();
         $scope.username = authFactory.getUsername();
+        $state.go('app.expense', {}, {reload: true});
     });
         
     $rootScope.$on('registration:Successful', function () {
         $scope.loggedIn = authFactory.isAuthenticated();
         $scope.username = authFactory.getUsername();
+        $state.go('app.expense', {}, {reload: true});
     });
     
     $scope.stateis = function(curstate) {
