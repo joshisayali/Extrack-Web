@@ -110,7 +110,10 @@
                                 <label class="control-label" for="toDate">To Date</label>
                                 <input class="form-control" id="toDate" placeholder="mm/dd/yyyy" type="date" ng-model="filterData.toDate">
                             </div>
-                            <button type="submit" class="btn btn-info">Filter</button>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-info">Filter</button>
+                                <a ui-sref="app.expense" ui-sref-opts="{reload:true}" class="btn btn-info" ng-if="isFilter">Show All</a>
+                            </div>
                         </form>
                     </div>
                 </div>

@@ -8,6 +8,7 @@ angular.module('extrackWebApp')
     $scope.filterData = {fromDate:'',toDate:''};
     $scope.showError = false;  
     $scope.customErrorMessage = "Error Occured. Please try again. Error Details:";
+    $scope.isFilter=false;
     
     /*----------------------------------------routes---------------------------------------------------*/
     
@@ -103,6 +104,7 @@ angular.module('extrackWebApp')
             function(response){
                 $scope.expenses = response;
                 $scope.showError = false;
+                $scope.isFilter=true;
             },
             function(error){
                 console.log('Error: '+error);
